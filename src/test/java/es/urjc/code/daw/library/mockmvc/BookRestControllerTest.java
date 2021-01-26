@@ -63,7 +63,7 @@ public class BookRestControllerTest {
 		books.get(books.size() - 1).setId(3);
 		
 		book = new Book("New Book", "New");
-		book.setId(4);
+		book.setId(6);
 	}
 
 	@AfterEach
@@ -107,7 +107,7 @@ public class BookRestControllerTest {
 	}
 
 	@Test
-	@WithMockUser(username = "user", password = "pass", roles = "ADMIN")
+	@WithMockUser(username = "admin", password = "pass", roles = "ADMIN")
 	public void deleteBookOk() throws Exception {
 		
 		doNothing().when(bookService).delete(2);

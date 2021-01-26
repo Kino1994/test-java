@@ -7,9 +7,14 @@ import static io.restassured.path.json.JsonPath.from;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import es.urjc.code.daw.library.book.Book;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 
@@ -20,18 +25,26 @@ public class BookRestControllerTest {
 	@LocalServerPort
 	int port;
 	
+	@Autowired
+	private ObjectMapper objectMapper;
+	
+	private Book book;
+	
 	@BeforeEach
 	public void beforeEach() {		
 		RestAssured.port = port;
 		RestAssured.useRelaxedHTTPSValidation();
 		RestAssured.baseURI = "https://localhost:" + port;
+		
+		book = new Book("New Book", "New");
+		book.setId(6);
 	}
 
 	@Test
 	public void getBooksOk() {
 		
 		when()
-			.get("/api/books/")
+			.get("/api/books/")	// Seems deleteBook test is always executed before. So there is one item less: 4 items.
 		.then()
 			.statusCode(200)
 			.body("[0].id", equalTo(2))
@@ -49,14 +62,14 @@ public class BookRestControllerTest {
 	}
 	
 	@Test
-	public void createBookOk() {
+	public void createBookOk() throws JsonProcessingException {
 
 		Response response = 
 			given()
 	            .auth()
 	            .basic("user", "pass")
 	            .contentType("application/json")
-	            .body("{\"title\":\"New Book\",\"description\":\"New\" }")
+	            .body(objectMapper.writeValueAsString(book))
 	            .when()
 	            .post("/api/books/").andReturn();
 

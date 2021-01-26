@@ -52,7 +52,7 @@ public class BookRestControllerUnitTest {
 
     @BeforeEach
     public void beforeEach() {
-        this.webTestClient = MockMvcWebTestClient
+        webTestClient = MockMvcWebTestClient
         	.bindTo(mockMvc)
         	.build();
         
@@ -83,15 +83,14 @@ public class BookRestControllerUnitTest {
     	
         when(bookService.findAll()).thenReturn(books);
 
-        BodyContentSpec bodyContentSpec = webTestClient.
-        	get()
-	            .uri("/api/books/")
-	            .exchange()
-	            .expectStatus()
-	            .isOk()
-	            .expectBody()	            
-        		.jsonPath("$")
-	            .value(hasSize(3));
+        BodyContentSpec bodyContentSpec = webTestClient.get()
+        	.uri("/api/books/")
+        	.exchange()
+	        .expectStatus()
+	        .isOk()
+	        .expectBody()	            
+        	.jsonPath("$")
+	        .value(hasSize(3));
         
         for (int i = 0; i < books.size(); i++) {
         	bodyContentSpec.jsonPath("$[" + i + "].id")
@@ -111,8 +110,7 @@ public class BookRestControllerUnitTest {
     	
     	when(bookService.save(any(Book.class))).thenReturn(book);
 
-        this.webTestClient.
-            post()
+        webTestClient.post()
             .uri("/api/books/")
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .body(BodyInserters.fromValue(objectMapper.writeValueAsString(book)))
@@ -126,13 +124,12 @@ public class BookRestControllerUnitTest {
     }
 
     @Test
-    @WithMockUser(username = "user", password = "pass", roles = "ADMIN")
+    @WithMockUser(username = "admin", password = "pass", roles = "ADMIN")
     public void deleteBookOk() {
     	
     	doNothing().when(bookService).delete(3);
 
-        webTestClient.
-            delete()
+        webTestClient.delete()
             .uri("/api/books/3")
             .exchange()
             .expectStatus()
