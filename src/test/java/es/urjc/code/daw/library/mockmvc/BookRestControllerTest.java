@@ -62,7 +62,7 @@ public class BookRestControllerTest {
 		books.get(books.size() - 1).setId(3L);
 		
 		book = new Book("New Book", "New");
-		book.setId(1);
+		book.setId(4);
 	}
 
 	@AfterEach
@@ -95,7 +95,7 @@ public class BookRestControllerTest {
 
 		mvc.perform(post("/api/books/").contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(book))).andExpect(status().isCreated())
-			.andExpect(jsonPath("$.id", equalTo(1))).andExpect(jsonPath("$.title", equalTo("New Book")))
+			.andExpect(jsonPath("$.id", equalTo(4))).andExpect(jsonPath("$.title", equalTo("New Book")))
 			.andExpect(jsonPath("$.description", equalTo("New")));
 	}
 
@@ -103,9 +103,9 @@ public class BookRestControllerTest {
 	@WithMockUser(username = "user", password = "pass", roles = "ADMIN")
 	public void deleteBookOk() throws Exception {
 		
-		doNothing().when(bookService).delete(3);
+		doNothing().when(bookService).delete(1);
 		
-		mvc.perform(delete("/api/books/3"))
+		mvc.perform(delete("/api/books/1"))
 			.andExpect(status().isOk());
 	}
 
